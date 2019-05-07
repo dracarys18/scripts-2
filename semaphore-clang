@@ -1,0 +1,61 @@
+#!bin/bash
+IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
+echo "Clone Toolchains"
+git clone --quiet -j32 https://github.com/najahiiii/clang.git -b llvm9 clang
+git clone --quiet -j32 https://github.com/najahiii/aarch64-linux-gnu.git -b 4.9-mirror gcc
+echo "Done"
+CT="$(pwd)/clang/bin/clang"
+GCC="$(pwd)/gcc/bin/aarch64-linux-android-"
+tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
+START=$(date +"%s")
+export ARCH=arm64
+export KBUILD_BUILD_USER=z4nyx
+export KBUILD_BUILD_HOST=SemaphoreCI
+# sticker plox
+function sticker() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
+                        -d sticker="CAADBAAD9gADASBNBuS7JEne28OmAg" \
+                        -d chat_id=$chat_id
+}
+# Send info plox channel
+function sendinfo() {
+        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
+                        -d chat_id=$chat_id \
+                        -d "disable_web_page_preview=true" \
+                        -d "parse_mode=html" \
+                        -d text="<b>PotatoKernel CAF</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>ROLEX</b> (Redmi 4A)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 9.0/Pie)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(${CT} --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g')</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>Build Status:</b> #untested"
+}
+# Push kernel to channel
+function push() {
+        cd AnyKernel
+	ZIP=$(echo Potato*.zip)
+	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
+			-F chat_id="$chat_id" \
+			-F "disable_web_page_preview=true" \
+			-F "parse_mode=html" \
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #sunny"
+}
+# Compile plox
+function compile() {
+        make -s -C $(pwd) O=out rolex_defconfig
+        make -C $(pwd) CC=${CT} CROSS_COMPILE=${GCC} O=out -j32 -l32 2>&1
+            if ! [ -a $IMAGE ]; then
+                finerr
+                exit 1
+            fi
+        cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/zImage
+        paste
+}
+# Zipping
+function zipping() {
+        cd AnyKernel
+        zip -r9 PotatoKernel-Pie-${tanggal}.zip *
+        cd ..
+}
+sticker
+sendinfo
+compile
+zipping
+END=$(date +"%s")
+DIFF=$(($END - $START))
+push
