@@ -1,18 +1,18 @@
 #!bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Clone Toolchains"
-git clone -j32 https://github.com/VRanger/aarch64-linux-gnu -b linaro-7.x gcc
+git clone --silence -j32 https://github.com/VRanger/aarch64-linux-gnu -b linaro-7.x gcc
 echo "Done"
 GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 START=$(date +"%s")
 export ARCH=arm64
 export KBUILD_BUILD_USER=z4nyx
-export KBUILD_BUILD_HOST=PotatoBaker
+export KBUILD_BUILD_HOST=MilkyWay
 # sticker plox
 function sticker() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
-                        -d sticker="CAADBQADYQADMX5eLl09K7dBhKQQAg" \
+                        -d sticker="CAADBQADZQADMX5eLmccFab0FNs0Ag" \
                         -d chat_id=$chat_id
 }
 # Send info plox channel
@@ -21,25 +21,23 @@ function sendinfo() {
                         -d chat_id=$chat_id \
                         -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
-                        -d text="<b>PotatoKernel CAF</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>ROLEX</b> (Redmi 4A)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 9.0/Pie)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(${GCC}gcc --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>SemaphoreCI Status</b> <a href='https://z4nyx.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}'>here</a>%0A<b>Build Status:</b> #untested"
+                        -d text="<b>CosmicKernel CAF</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>ROLEX</b> (Redmi 4A)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 9.0/Pie)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(${GCC}gcc --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>SemaphoreCI Status</b> <a href='https://z4nyx.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}'>here</a>%0A<b>Build Status:</b> #untested"
 }
 # Push kernel to channel
 function push() {
         cd AnyKernel
-	ZIP=$(echo Potato*.zip)
+	ZIP=$(echo Cosmic*.zip)
 	curl -F document=@$ZIP "https://api.telegram.org/bot$token/sendDocument" \
 			-F chat_id="$chat_id" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #sunny | <b>GCC 9.1.0</b>"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #sunny | <b>GCC 7.4.0</b>"
 }
 # Fin Error
 function finerr() {
-        curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
-			-d chat_id="$chat_id" \
-			-d "disable_web_page_preview=true" \
-			-d "parse_mode=markdown" \
-			-d text="Job ${SEMAPHORE_JOB_NAME} throw an error(s) | R.I.P"
+        curl -s -X POST "https://api.telegram.org/bot$token/sendSticker" \
+                        -d sticker="CAADBQADZgADMX5eLqIwWt3puzSpAg" \
+                        -d chat_id=$chat_id
         exit 1
 }
 # Compile plox
@@ -55,7 +53,7 @@ function compile() {
 # Zipping
 function zipping() {
         cd AnyKernel
-        zip -r9 PotatoKernel-Pie-rolex-${tanggal}.zip *
+        zip -r9 CosmicKernel-Pie-rolex-${tanggal}.zip *
         cd ..
 }
 sendinfo
