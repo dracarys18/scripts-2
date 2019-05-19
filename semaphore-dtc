@@ -1,11 +1,12 @@
 #!bin/bash
 IMAGE=$(pwd)/out/arch/arm64/boot/Image.gz-dtb
 echo "Clone Toolchains"
-git clone -q -j32 https://github.com/najahiiii/DragonTC.git -b 9.0 clang
+git clone -q -j32 https://github.com/najahiiii/clang.git -b llvm9 clang
 git clone -q -j32 https://github.com/najahiiii/aarch64-linux-gnu.git -b 4.9-mirror gcc
 echo "Done"
 echo "Clone AnyKernel"
 git clone -q -j32 https://github.com/z4nyx/AnyKernel -b ehe
+echo "Done"
 CT="$(pwd)/clang/bin/clang"
 GCC="$(pwd)/gcc/bin/aarch64-linux-android-"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
@@ -35,7 +36,7 @@ function push() {
 			-F chat_id="$chat_id" \
 			-F "disable_web_page_preview=true" \
 			-F "parse_mode=html" \
-			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #sunny| <b>DragonTC 9</b>"
+			-F caption="Build took $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) second(s). | #sunny| <b>Clang 9.0.3</b>"
 }
 # Fin Error
 function finerr() {
