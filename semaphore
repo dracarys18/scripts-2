@@ -5,6 +5,7 @@ git clone -q -j32 https://github.com/Teamlions/aarch64-linux-gnu-7.3 gcc
 echo "Done"
 echo "Clone AnyKernel"
 git clone -q -j32 https://github.com/z4nyx/AnyKernel 
+echl "Done"
 GCC="$(pwd)/gcc/bin/aarch64-linux-gnu-"
 tanggal=$(TZ=Asia/Jakarta date +'%H%M-%d%m%y')
 START=$(date +"%s")
@@ -21,7 +22,6 @@ function sticker() {
 function sendinfo() {
         curl -s -X POST "https://api.telegram.org/bot$token/sendMessage" \
                         -d chat_id=$chat_id \
-                        -d "disable_web_page_preview=true" \
                         -d "parse_mode=html" \
                         -d text="<b>CosmicKernel CAF</b> new build is up%0AStarted on <code>SemaphoreCI</code>%0AFor device <b>ROLEX</b> (Redmi 4A)%0Abranch <code>$(git rev-parse --abbrev-ref HEAD)</code> (Android 9.0/Pie)%0AUnder commit <code>$(git log --pretty=format:'"%h : %s"' -1)</code>%0AUsing compiler: <code>$(${GCC}gcc --version | head -n 1)</code>%0AStarted on <code>$(TZ=Asia/Jakarta date)</code>%0A<b>SemaphoreCI Status</b> <a href='https://z4nyx.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}'>here</a>%0A<b>Build Status:</b> #untested"
 }
